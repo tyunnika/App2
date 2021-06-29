@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:viewmodels="clr-namespace:App2.ViewModels"
+             xmlns:mvvm="clr-namespace:MvvmHelpers;assembly=MvvmHelpers"
+             xmlns:models="clr-namespace:App2.Models"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="App2.Views.CardsEquipmentPage"
+             x:DataType="viewmodels:CardsEquipmentViewModel"
+             x:Name="CardsPage">
+
+    <ContentPage.BindingContext>
+        <viewmodels:CardsEquipmentViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <xct:ItemSelectedEventArgsConverter x:Key="ItemSelectedEventArgsConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ListView 
+              SelectedItem="{Binding SelectedCards, Mode=TwoWay}"
+              CachingStrategy="RecycleElement"
+              BackgroundColor="Transparent"
+              ItemsSource="{Binding CardsGroups}"
+              IsGroupingEnabled="True"
+              GroupDisplayBinding="{Binding Key}"
+              HasUnevenRows="True"
+              RowHeight="100"
+              SeparatorVisibility="None"
+              IsPullToRefreshEnabled="True"
+              IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+              RefreshCommand="{Binding RefreshCommand}"
+              RefreshControlColor="DarkBlue">
+        <ListView.Behaviors>
+            <xct:EventToCommandBehavior
+            EventName="ItemSelected"
+                Command="{Binding SelectedCommand}"
+                
+                EventArgsConverter="{StaticResource ItemSelectedEventArgsConverter}"
+                />
+        </ListView.Behaviors>
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="models:Cards">
+                <ViewCell>
+                    <ViewCell.ContextActions>
+                        <MenuItem Text="Favorite" 
+                                  Command="{Binding
+                            Source={x:Reference CardsPage},
+                            Path=BindingContext.FavoriteCommand}"
+                                  CommandParameter="{Binding .}"/>
+                        <MenuItem Text="Delete" IsDestructive="True"/>
+                    </ViewCell.ContextActions>
+                    <Grid Padding="10">
+                        <Frame CornerRadius="20"
+                               HasShadow="True">
+                            <StackLayout Orientation="Horizontal">
+                                <Image Source="{Binding Image}"
+                                       WidthRequest="66"/>
+                                <StackLayout VerticalOptions="Center">
+                                     <Label VerticalOptions="Center"
+                                        FontSize ="Large"
+                                        Text="{Binding Name}"/>
+                                     <Label VerticalOptions="Center"
+                                        FontSize ="Large"
+                                        Text="{Binding Group}"/>
+                               </StackLayout>
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.Header>
+            <StackLayout Orientation="Horizontal">
+                <Label
+                    HorizontalOptions="Center"
+                    Text="Your favorite Cards"/>
+            </StackLayout>
+        </ListView.Header>
+        <ListView.Footer>
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="Center">
+                <Button
+                    Command="{Binding LoadMoreCommand}"
+                    Style="{StaticResource ButtonOutline}"
+                    Text="Load More" />
+            </StackLayout>
+        </ListView.Footer>
+        
+    </ListView>
+</ContentPage>

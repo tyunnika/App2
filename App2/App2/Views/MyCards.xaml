@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:viewmodels="clr-namespace:App2.ViewModels"
+             xmlns:mvvm="clr-namespace:MvvmHelpers;assembly=MvvmHelpers"
+             xmlns:models="clr-namespace:App2.Models"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="App2.Views.MyCards"
+             x:Name="MyCardsPage"
+             x:DataType="viewmodels:MyCardsViewModel">
+
+    <ContentPage.BindingContext>
+        <viewmodels:MyCardsViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <xct:ItemSelectedEventArgsConverter x:Key="ItemSelectedEventArgsConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Command="{Binding AddCommand}"/>
+    </ContentPage.ToolbarItems>
+
+    <ListView
+        BackgroundColor="Transparent"
+        CachingStrategy="RecycleElement"
+        HasUnevenRows="True"
+        IsPullToRefreshEnabled="True"
+        IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+        ItemsSource="{Binding Cards}"
+        RefreshCommand="{Binding RefreshCommand}"
+        RefreshControlColor="DarkBlue"
+        SelectionMode="None">
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="models:Cards">
+                <ViewCell>
+                    <ViewCell.ContextActions>
+                        <MenuItem
+                            Command="{Binding Source={x:Reference MyCardsPage}}"
+                            CommandParameter="{Binding .}"
+                            IsDestructive="True"
+                            Text="Delete"/>
+                        
+                    </ViewCell.ContextActions>
+                    <Grid Padding="10">
+                        <Frame CornerRadius="20" HasShadow="True">
+                            <StackLayout Orientation="Horizontal">
+                                <Image Source="{Binding Image}" WidthRequest="66"/>
+                                <StackLayout VerticalOptions="Center">
+                                    <Label
+                                        FontSize="Large"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Center"/>
+                                    <Label 
+                                        FontSize="Large"
+                                        Text="{Binding Group}"
+                                        VerticalOptions="Center"/>
+                                    <Label 
+                                        FontSize="Small"
+                                        Text="{Binding Id}"
+                                        VerticalOptions="Center"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        
+    </ListView>
+   
+</ContentPage>
